@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('perans', function (Blueprint $table) {
             $table->id();
             $table->string('actor');
+            $table->foreignId('film_id')->constrained('films')->cascadeOnDelete();
+            $table->foreignId('cast_id')->constrained('casts')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::dropIfExists('perans');
+        Schema::dropIfExists('perans');
     }
 };

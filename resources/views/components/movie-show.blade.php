@@ -38,7 +38,7 @@
           <div class="single-right-grids">
 
             <div class="col-md-4 single-right-grid-left">
-              <a href="{{ route('movies.show', $film->id) }}"><img src="/{{ $film->poster }}" alt="" /></a>
+              <a href="{{ route('movies.show', $film->id) }}"><img src="{{ asset($film->poster) }}" alt="" /></a>
             </div>
             <div class="col-md-8 single-right-grid-right">
               <div class="song-info">
@@ -57,12 +57,21 @@
                         </tr>
                       </thead>
                       <tbody>
-                        @foreach ($perans as $peran)
-                        <tr>
-                          <td class="w3-list-info">{{ $peran->cast_id }}</td>
-                          <td class="w3-list-info">{{ $peran->actor }}</td>
-                        </tr>
-                        @endforeach
+                          @forelse ($perans as $peran)
+                          <tr>
+                              <td class="w3-list-info">
+                                  {{ $peran->cast->name ?? 'Tidak diketahui' }}
+                                  @if($peran->cast && $peran->cast->age)
+                                      <br><small>({{ $peran->cast->age }} tahun)</small>
+                                  @endif
+                              </td>
+                              <td class="w3-list-info">{{ $peran->actor }}</td>
+                          </tr>
+                          @empty
+                          <tr>
+                              <td colspan="2">Belum ada data cast.</td>
+                          </tr>
+                          @endforelse
                       </tbody>
                     </table>
                   </div>
@@ -118,28 +127,45 @@
           <div class="all-comments-info">
             <a href="#">Comments</a>
             <div class="agile-info-wthree-box">
-              <form>
-                <input type="text" placeholder="Name" required="">			           					   
-                <input type="text" placeholder="Email" required="">
-                <input type="text" placeholder="Phone" required="">
-                <textarea placeholder="Message" required=""></textarea>
-                <input type="submit" value="SEND">
-                <div class="clearfix"> </div>
-              </form>
+              @auth
+                <form action="{{ route('kritik.store', $film) }}" method="POST">
+                  @csrf
+                  <textarea name="comment" placeholder="Tulis komentar..." required rows="4"></textarea>
+                  <input type="number" name="rating" min="1" max="5" value="5" placeholder="Rating 1-5">
+                  <input type="submit" value="SEND">
+                  <div class="clearfix"></div>
+                </form>
+                @if(session('success'))
+                  <p style="color:green;">{{ session('success') }}</p>
+                @endif
+              @else
+                <p>
+                  <a href="#" data-toggle="modal" data-target="#myModal">
+                    Login dulu
+                  </a> untuk berkomentar.
+                </p>
+              @endauth
             </div>
           </div>
           <div class="media-grids">
             @foreach ($comments as $comment)
-              <div class="media">
-                <h5>{{ $comment->user_id }}</h5>
-                <div class="media-left">
-                  <a href="#">
-                    <img src="{{ asset('storage/images/user.jpg') }}" title="One movies" alt=" " />
-                  </a>
-                </div>
-                <div class="media-body">
-                  <p>{{ $comment->comment }}</p>
-                </div>
+              <div class="media-grids">
+                  @forelse ($comments as $comment)
+                    <div class="media">
+                      <h5>{{ $comment->user->name ?? 'Anonim' }}</h5>
+                      <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                      <div class="media-left">
+                        <a href="#">
+                          <img src="{{ asset('storage/images/user.jpg') }}" title="User" alt="User" />
+                        </a>
+                      </div>
+                      <div class="media-body">
+                        <p>{{ $comment->comment }}</p>
+                      </div>
+                    </div>
+                  @empty
+                    <p>Belum ada komentar.</p>
+                  @endforelse
               </div>
             @endforeach
           </div>
@@ -151,7 +177,7 @@
           <div class="single-grid-right">
             <div class="single-right-grids">
               <div class="col-md-4 single-right-grid-left">
-                <a href="{{ route('movies.show', $film->id) }}"><img src="/{{ $film->poster }}" alt="" /></a>
+                <a href="{{ route('movies.show', $film->id) }}"><img src="{{ asset($film->poster) }}" alt="" /></a>
               </div>
               <div class="col-md-8 single-right-grid-right">
                 <a href="{{ route('movies.show', $film->id) }}" class="title">{{ $film->title }}</a>

@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('films', function (Blueprint $table) {
@@ -17,15 +14,13 @@ return new class extends Migration
             $table->text('sinopsis');
             $table->integer('year');
             $table->text('poster');
+            $table->foreignId('genre_id')->nullable()->constrained('genres')->nullOnDelete();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Schema::dropIfExists('films');
+        Schema::dropIfExists('films');
     }
 };

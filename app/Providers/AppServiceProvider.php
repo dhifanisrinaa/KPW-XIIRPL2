@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\Genre;
-
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
+use App\Models\Genre;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,11 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
-        if(Schema::hasTable('genres'))
-        {
-            view()->share('genres', Genre::all());
-            Paginator::useBootstrap();
-        }
+        // Kirim $genres ke semua view yang meng-include navbar
+        View::composer(
+            ['templates.component.navbar', 'templates.index', 'components.*'],
+            function ($view) {
+                $view->with('genres', Genre::orderBy('id')->get());
+            }
+        );
     }
 }

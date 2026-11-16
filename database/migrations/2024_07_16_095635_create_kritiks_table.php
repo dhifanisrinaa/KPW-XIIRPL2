@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('kritiks', function (Blueprint $table) {
             $table->id();
             $table->text('comment');
-            $table->integer('rating');
+            $table->integer('rating')->default(0);
+            $table->foreignId('film_id')->constrained('films')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::dropIfExists('kritiks');
+        Schema::dropIfExists('kritiks');
     }
 };

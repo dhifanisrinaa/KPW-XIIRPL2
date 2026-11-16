@@ -9,11 +9,6 @@
         <input type="submit" value="Go">
       </form>
     </div>
-    <div class="w3l_sign_in_register">
-      <ul>
-        <li><a href="#" data-toggle="modal" data-target="#myModal">Login</a></li>
-      </ul>
-    </div>
     <div class="clearfix"> </div>
   </div>
 </div>
